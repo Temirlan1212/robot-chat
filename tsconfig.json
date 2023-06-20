@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,9 +14,22 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./src",
+    "typeRoots": ["node_modules/@types", "src/types"],
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/assets/*": ["assets/*"],
+      "@/utils/*": ["utils/*"],
+      "@/screens/*": ["screens/*"],
+      "@/ui/*": ["components/ui/*"],
+      "@/store/*": ["store/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/routing/*": ["routing/*"],
+      "@/shared/*": ["shared/*"],
+      "@/services/*": ["services/*"]
+    }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src/lib.d.ts", "src/**/*"],
+  "exclude": ["node_modules", "src/lib.d.ts"]
 }
