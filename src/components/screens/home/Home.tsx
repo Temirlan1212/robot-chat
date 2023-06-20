@@ -3,12 +3,12 @@ import styles from "./Home.module.scss";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
-import chatApi from "../../../shared/api/chat";
+import assistantChatApi from "../../../shared/api/chat";
 import { handlePlay } from "../../../utils/soundEffect";
 import { API_URL } from "../../../shared/api/api.config";
 import InactivityTracker from "../../ui/inactivityTracker/InactivityTracker";
 
-const { getAssistantResponse } = chatApi;
+const { getAssistantResponse } = assistantChatApi;
 
 const initChatList = [
   { text: "Привет, чем могу помочь?", type: "assistant", id: nextId() },
@@ -19,21 +19,19 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLInputElement>(null);
 
-  const updateList = (data: string, type: string) => {
-    const newItem = { type, text: data, id: nextId() };
+  const updateList = (text: string, type: string) => {
+    const newItem = { type, text, id: nextId() };
     setChatList((prevMessages) => [...prevMessages, newItem]);
   };
 
-  async function uploadAudioText(data: string) {
-    const formData = new FormData();
-    formData.set("text", data);
+  async function uploadAudioText(text: string) {
     if (containerRef != null && containerRef?.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
 
     try {
       setLoading(true);
-      const { response, audio } = await getAssistantResponse(formData);
+      const { response, audio } = await getAssistantResponse(text);
       handlePlay(`${API_URL}${audio}`);
       updateList(response, "assistant");
     } catch {
