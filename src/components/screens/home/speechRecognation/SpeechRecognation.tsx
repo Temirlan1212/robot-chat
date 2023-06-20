@@ -2,12 +2,12 @@ import styles from "./SpeechRecognation.module.scss";
 import { useSpeechRecognition } from "react-speech-recognition";
 import { useEffect, useRef, FC } from "react";
 import cn from "classnames";
-import AudioRecordAnimation from "../../../ui/audioRecordAnimation/audioRecordAnimation";
 import SpeechRecognition from "react-speech-recognition";
-import { PlayAssistant, StopAssistant } from "../../../../assets/soundEffects";
-import TypingEffect from "../../../ui/typingEffect/TypingEffect";
-import { handlePlay } from "../../../../utils/soundEffect";
-import { useOutsideClick } from "../../../../hooks/useOutsideClick";
+import { handlePlay } from "utils/soundEffect";
+import { PlayAssistant, StopAssistant } from "assets/soundEffects";
+import { useOutsideClick } from "hooks/useOutsideClick";
+import AudioRecordAnimation from "components/ui/audioRecordAnimation/audioRecordAnimation";
+import TypingEffect from "components/ui/typingEffect/TypingEffect";
 
 interface IProps {
   loading: boolean;

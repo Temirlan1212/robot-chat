@@ -3,10 +3,10 @@ import styles from "./Home.module.scss";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
-import assistantChatApi from "../../../shared/api/chat";
-import { handlePlay } from "../../../utils/soundEffect";
-import { API_URL } from "../../../shared/api/api.config";
-import InactivityTracker from "../../ui/inactivityTracker/InactivityTracker";
+import { handlePlay } from "utils/soundEffect";
+import assistantChatApi from "shared/api/chat";
+import { API_URL } from "shared/api/api.config";
+import InactivityTracker from "components/ui/inactivityTracker/InactivityTracker";
 
 const { getAssistantResponse } = assistantChatApi;
 
