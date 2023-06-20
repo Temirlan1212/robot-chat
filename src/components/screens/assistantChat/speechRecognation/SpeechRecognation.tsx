@@ -40,14 +40,20 @@ const SpeechRecognation: FC<IProps> = ({
     }
   }, [finalTranscript]);
 
+  useEffect(() => {
+    if (!listening) {
+      handlePlay(StopAssistant);
+    } else {
+      handlePlay(PlayAssistant);
+    }
+  }, [listening]);
+
   const handleRecordPlay = () => {
     SpeechRecognition.startListening();
-    handlePlay(PlayAssistant);
   };
 
   const handleRecordStop = () => {
     SpeechRecognition.stopListening();
-    handlePlay(StopAssistant);
   };
 
   useOutsideClick(ref, () => {
