@@ -1,0 +1,31 @@
+@use "../../../../../assets/styles/utils/" as *;
+
+.wrapper {
+  display: inline-grid;
+  background-color: $primary-color-light;
+  padding: 15px;
+  border-radius: 20px;
+  max-width: 90%;
+  font-family: $font-family-primary;
+  font-size: clamp(1rem, 2.5vw, 1rem);
+
+  &.user {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 20px;
+    margin-right: auto;
+  }
+
+  &.assistant {
+    background-color: rgba($primary-color, 20%);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 0px;
+    margin-left: auto;
+  }
+
+  &.error {
+    background-color: rgba($primary-color-danger, 20%);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 0px;
+    margin-left: auto;
+  }
+}

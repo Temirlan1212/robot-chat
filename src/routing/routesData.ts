@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 
-import { Home } from "components/index";
+import { Home, AssistantChat } from "components/index";
 import { RoutesEnum } from "shared/constants/routesEnum";
 
 interface IRoute {
@@ -8,4 +8,7 @@ interface IRoute {
   component: FunctionComponent;
 }
 
-export const routes: IRoute[] = [{ component: Home, path: RoutesEnum.HOME }];
+export const routes: IRoute[] = [
+  { component: Home, path: RoutesEnum.HOME },
+  { component: AssistantChat, path: RoutesEnum.ASSISTANT_CHAT },
+];
