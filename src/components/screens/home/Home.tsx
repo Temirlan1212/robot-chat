@@ -17,6 +17,7 @@ import {
   startOverChat,
   initChatList,
 } from "utils/chatScripts";
+import { OnInitAssistant } from "assets/soundEffects";
 
 const { getAssistantResponse, getBinaryTreeAnswers } = assistantChatApi;
 
@@ -113,7 +114,7 @@ function Home() {
     if (option?.lang === chatMessageTypes.RU) i18next.changeLanguage("ru");
     if (option?.lang === chatMessageTypes.EN) i18next.changeLanguage("en");
     if (option?.action === chatMessageTypes.ACTIVATE_ASSISTANT) {
-      handlePlaySound("");
+      handlePlaySound(OnInitAssistant);
       if (!isAssistantActivated) setIsAssistantActivated(true);
       handleUpdateLastItemOptions(null);
       updateList(option.text, "user", option.id);

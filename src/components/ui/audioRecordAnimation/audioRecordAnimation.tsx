@@ -24,6 +24,7 @@ const AudioRecordAnimation: FC<IProps> = ({
       className={cn(
         styles[className],
         styles["audio-record-container"],
+        styles["initialAnimate"],
         isRecording ? styles["recording"] : ""
       )}
     >
