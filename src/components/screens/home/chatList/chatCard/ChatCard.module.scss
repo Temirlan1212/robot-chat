@@ -24,8 +24,8 @@
 
   &.error {
     background-color: rgba($primary-color-danger, 20%);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 20px;
     margin-right: auto;
   }
 

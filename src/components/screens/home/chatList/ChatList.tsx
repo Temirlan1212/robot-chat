@@ -12,12 +12,14 @@ export interface IProps extends HTMLAttributes<HTMLElement> {
   onOptionClick?: (option: IMessage) => any;
 }
 
-const ChatCardMessages: FC<IMessage> = ({ text, id, type }) => {
+const ChatCardMessages: FC<any> = ({ text, id, type }) => {
   const { t } = useTranslation();
 
   return text ? (
     <ChatCard key={id} className={type ?? ""}>
-      <TypingEffect text={t(text)} duration={2} />
+      {text.split("/n").map((txt, index) => (
+        <TypingEffect text={t(txt)} duration={2} key={index} />
+      ))}
     </ChatCard>
   ) : null;
 };

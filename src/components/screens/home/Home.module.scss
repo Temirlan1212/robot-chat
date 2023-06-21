@@ -1,10 +1,21 @@
 @use "assets/styles/utils" as *;
+$padding: 10;
 
 .wrapper {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: $padding + px;
+  padding-bottom: $padding + px;
   height: 100vh;
   padding-bottom: 150px;
   overflow: auto;
   scroll-behavior: smooth;
+}
+
+.iframeWrapper {
+  display: flex;
+  width: 100vw;
+}
+
+.external-website {
+  width: 50%;
+  height: calc($padding * 2 - 100) + vh;
 }

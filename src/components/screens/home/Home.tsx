@@ -1,4 +1,4 @@
-import { useRef, useState, RefObject } from "react";
+import { useRef, useState, RefObject, useEffect } from "react";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
@@ -25,6 +25,7 @@ function Home() {
   const [chatList, setChatList] = useState<IMessage[]>(initChatList);
   const [loading, setLoading] = useState(false);
   const [isAssistantActivated, setIsAssistantActivated] = useState(false);
+  const [isSplitScreenActivated, setIsSplitScreenActivated] = useState(false);
   const containerRef = useRef<HTMLInputElement>(null);
 
   const updateList = (text: string, type: string, id = nextId()) => {
@@ -129,6 +130,7 @@ function Home() {
       setChatList((prev) => [...prev, ...initChatList]);
       if (isAssistantActivated) setIsAssistantActivated(false);
       scrollBottom(containerRef);
+      setIsSplitScreenActivated(false);
       return;
     }
 
@@ -136,31 +138,54 @@ function Home() {
     scrollBottom(containerRef);
   };
 
+  useEffect(() => {
+    if (
+      chatList[chatList.length - 1].text.includes(
+        "//e.customs.gov.kg/passenger-declaration"
+      )
+    ) {
+      setIsSplitScreenActivated(true);
+    }
+  }, [chatList]);
+
   return (
-    <div className={styles.wrapper} ref={containerRef}>
-      <div className="container">
-        {chatList.length > 0 && (
-          <ChatList
-            chatList={chatList}
+    <div className={isSplitScreenActivated ? styles.iframeWrapper : ""}>
+      <div className={styles.wrapper} ref={containerRef}>
+        <div className="container">
+          {chatList.length > 0 && (
+            <ChatList
+              chatList={chatList}
+              loading={loading}
+              onOptionClick={handleOptionClick}
+            />
+          )}
+        </div>
+
+        {isAssistantActivated && (
+          <SpeechRecognation
+            className="container"
+            uploadAudioText={uploadAudioText}
+            updateList={updateList}
             loading={loading}
-            onOptionClick={handleOptionClick}
           />
         )}
+
+        <InactivityTracker
+          onInactive={handleInactive}
+          timeoutDuration={3 * 60 * 1000}
+        />
       </div>
 
-      {isAssistantActivated && (
-        <SpeechRecognation
-          className="container"
-          uploadAudioText={uploadAudioText}
-          updateList={updateList}
-          loading={loading}
-        />
+      {isSplitScreenActivated && (
+        <div className={styles["external-website"]}>
+          <iframe
+            src="https://e.customs.gov.kg/passenger-declaration"
+            title="Website"
+            width="100%"
+            height="100%"
+          />
+        </div>
       )}
-
-      <InactivityTracker
-        onInactive={handleInactive}
-        timeoutDuration={3 * 60 * 1000}
-      />
     </div>
   );
 }
