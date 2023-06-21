@@ -3,4 +3,5 @@ export interface IMessage {
   type: string;
   id?: any;
   options?: any;
+  lang?: string;
 }

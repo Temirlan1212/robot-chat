@@ -1,9 +1,9 @@
 import { HTMLAttributes, FC, Fragment, MouseEventHandler } from "react";
-import ChatCard from "./chatCard/ChatCard";
 import styles from "./ChatList.module.scss";
 import { IMessage } from "shared/types/chatWithAssistant";
 import TypingEffect from "components/ui/typingEffect/TypingEffect";
 import Loader from "components/ui/loader/Loader";
+import ChatCard from "./chatCard/ChatCard";
 
 export interface IProps extends HTMLAttributes<HTMLElement> {
   chatList: IMessage[];

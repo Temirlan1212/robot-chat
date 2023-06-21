@@ -2,24 +2,25 @@ import { useRef, useState, RefObject, useEffect } from "react";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
-import { handlePlay } from "utils/soundEffect";
+import { handlePlaySound } from "utils/soundEffect";
 import assistantChatApi from "shared/api/chat";
 import { API_URL } from "shared/api/api.config";
 import InactivityTracker from "components/ui/inactivityTracker/InactivityTracker";
 import styles from "./Home.module.scss";
 import { IMessage } from "shared/types/chatWithAssistant";
+import { IGetBinaryTreeAnswersResponse } from "shared/types/chatBot";
+import i18next from "i18next";
 
-const { getAssistantResponse } = assistantChatApi;
+const { getAssistantResponse, getBinaryTreeAnswers } = assistantChatApi;
 
 const initChatList: IMessage[] = [
-  { text: "enterPassword", type: "assistant", id: nextId() },
   {
-    text: "Вы хотите дальше продолжать?",
+    text: "Выберите язык / Choose language",
     type: "assistant",
     id: nextId(),
     options: [
-      { text: "Да", type: "option", id: nextId() },
-      { text: "Нет", type: "option", id: nextId() },
+      { text: "Английский / English", type: "option", id: 2, lang: "en" },
+      { text: "Русский / Russian", type: "option", id: 2, lang: "ru" },
     ],
   },
 ];
@@ -31,6 +32,19 @@ function Home() {
 
   const updateList = (text: string, type: string, id = nextId()) => {
     const newItem: IMessage = { type, text, id };
+    setChatList((prevMessages) => [...prevMessages, newItem]);
+  };
+
+  const updateOptionList = ({ yes, no, id, question_ru, question_en }) => {
+    const newItem = {
+      text: question_ru ?? question_en,
+      id,
+      type: "assistant",
+      options: [
+        { id: yes, text: "Yes", type: "option" },
+        { id: no, text: "No", type: "option" },
+      ],
+    };
     setChatList((prevMessages) => [...prevMessages, newItem]);
   };
 
@@ -46,7 +60,7 @@ function Home() {
     try {
       setLoading(true);
       const { response, audio } = await getAssistantResponse(text);
-      handlePlay(`${API_URL}${audio}`);
+      handlePlaySound(`${API_URL}${audio}`);
       updateList(response, "assistant");
     } catch {
       updateList("Ошибка, можете повторить", "error");
@@ -60,7 +74,10 @@ function Home() {
     console.log("User is inactive for 3 minutes");
   };
 
-  const handleClick = (option: IMessage) => {
+  const handleOptionClick = async (option: IMessage) => {
+    if (option?.lang === "ru") i18next.changeLanguage("ru");
+    if (option?.lang === "en") i18next.changeLanguage("en");
+
     setChatList((prevData) => {
       const lastIndex = prevData.length - 1;
       const updatedData: IMessage[] = prevData.map((item, index) =>
@@ -69,7 +86,14 @@ function Home() {
       return [...updatedData];
     });
 
-    updateList(option.text, "user", option.id);
+    if (option?.id) {
+      updateList(option.text, "user", option.id);
+      const res = (await getBinaryTreeAnswers(
+        option.id
+      )) as IGetBinaryTreeAnswersResponse;
+      handlePlaySound(res.audio_en ?? res.audio_ru);
+      updateOptionList(res);
+    }
   };
 
   return (
@@ -79,7 +103,7 @@ function Home() {
           <ChatList
             chatList={chatList}
             loading={loading}
-            onOptionClick={handleClick}
+            onOptionClick={handleOptionClick}
           />
         )}
       </div>

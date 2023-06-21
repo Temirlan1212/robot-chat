@@ -2,7 +2,7 @@ import { useRef, useState, RefObject } from "react";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
-import { handlePlay } from "utils/soundEffect";
+import { handlePlaySound } from "utils/soundEffect";
 import assistantChatApi from "shared/api/chat";
 import { API_URL } from "shared/api/api.config";
 import InactivityTracker from "components/ui/inactivityTracker/InactivityTracker";
@@ -36,7 +36,7 @@ function AssistantChat() {
     try {
       setLoading(true);
       const { response, audio } = await getAssistantResponse(text);
-      handlePlay(`${API_URL}${audio}`);
+      handlePlaySound(`${API_URL}${audio}`);
       updateList(response, "assistant");
     } catch {
       updateList("Ошибка, можете повторить", "error");

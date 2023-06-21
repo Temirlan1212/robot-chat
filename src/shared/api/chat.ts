@@ -1,3 +1,4 @@
+import { IGetBinaryTreeAnswersResponse } from "shared/types/chatBot";
 import { axiosClient } from "./api.config";
 
 const assistantChatApi = {
@@ -13,6 +14,23 @@ const assistantChatApi = {
     } catch (error) {
       console.error("Error occurred while making the API request:", error);
       throw error;
+    }
+  },
+
+  getBinaryTreeAnswers: async (id: number) => {
+    let lang = localStorage.getItem("i18nextLng");
+    if (lang == null) lang = "ru";
+
+    try {
+      const response = await axiosClient.get<IGetBinaryTreeAnswersResponse>(
+        `/api/${id}/`,
+        {
+          headers: { "Accept-Language": lang },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error occurred while making the API request:", error);
     }
   },
 };

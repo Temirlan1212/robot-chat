@@ -3,7 +3,7 @@ import { useSpeechRecognition } from "react-speech-recognition";
 import { useEffect, useRef, FC, useState } from "react";
 import cn from "classnames";
 import SpeechRecognition from "react-speech-recognition";
-import { handlePlay } from "utils/soundEffect";
+import { handlePlaySound } from "utils/soundEffect";
 import { PlayAssistant, StopAssistant } from "assets/soundEffects";
 import { useOutsideClick } from "hooks/useOutsideClick";
 import AudioRecordAnimation from "components/ui/audioRecordAnimation/audioRecordAnimation";
@@ -43,10 +43,10 @@ const SpeechRecognation: FC<IProps> = ({
 
   useEffect(() => {
     if (!listening && isClicked) {
-      handlePlay(StopAssistant);
+      handlePlaySound(StopAssistant);
     }
     if (listening && isClicked) {
-      handlePlay(PlayAssistant);
+      handlePlaySound(PlayAssistant);
     }
   }, [listening]);
 
