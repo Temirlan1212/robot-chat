@@ -50,6 +50,10 @@ const SpeechRecognation: FC<IProps> = ({
     }
   }, [listening]);
 
+  useEffect(() => {
+    return () => handleRecordStop();
+  }, []);
+
   const handleRecordPlay = () => {
     SpeechRecognition.startListening();
     setIsClicked(true);
