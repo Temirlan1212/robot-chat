@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, RefObject } from "react";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
@@ -24,10 +24,14 @@ function AssistantChat() {
     setChatList((prevMessages) => [...prevMessages, newItem]);
   };
 
-  async function uploadAudioText(text: string) {
-    if (containerRef != null && containerRef?.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+  const scrollBottom = (ref: RefObject<HTMLInputElement>) => {
+    if (ref != null && ref?.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
     }
+  };
+
+  async function uploadAudioText(text: string) {
+    scrollBottom(containerRef);
 
     try {
       setLoading(true);
@@ -38,9 +42,7 @@ function AssistantChat() {
       updateList("Ошибка, можете повторить", "error");
     } finally {
       setLoading(false);
-      if (containerRef != null && containerRef?.current) {
-        containerRef.current.scrollTop = containerRef.current.scrollHeight;
-      }
+      scrollBottom(containerRef);
     }
   }
 
