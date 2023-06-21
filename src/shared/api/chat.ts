@@ -1,5 +1,6 @@
 import { IGetBinaryTreeAnswersResponse } from "shared/types/chatBot";
 import { axiosClient } from "./api.config";
+import { getItem } from "services/localStorage.service";
 
 const assistantChatApi = {
   getAssistantResponse: async (payload: string) => {
@@ -18,7 +19,7 @@ const assistantChatApi = {
   },
 
   getBinaryTreeAnswers: async (id: number) => {
-    let lang = localStorage.getItem("i18nextLng");
+    let lang = getItem("i18nextLng");
     if (lang == null) lang = "ru";
 
     try {

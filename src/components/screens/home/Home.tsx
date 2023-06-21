@@ -1,4 +1,4 @@
-import { useRef, useState, RefObject, useEffect } from "react";
+import { useRef, useState, RefObject } from "react";
 import nextId from "react-id-generator";
 import ChatList from "./chatList/ChatList";
 import SpeechRecognation from "./speechRecognation/SpeechRecognation";
@@ -10,24 +10,20 @@ import styles from "./Home.module.scss";
 import { IMessage } from "shared/types/chatWithAssistant";
 import { IGetBinaryTreeAnswersResponse } from "shared/types/chatBot";
 import i18next from "i18next";
+import { getItem } from "services/localStorage.service";
+import { chatMessageTypes } from "shared/constants/chat";
+import {
+  activateAssistant,
+  startOverChat,
+  initChatList,
+} from "utils/chatScripts";
 
 const { getAssistantResponse, getBinaryTreeAnswers } = assistantChatApi;
-
-const initChatList: IMessage[] = [
-  {
-    text: "Выберите язык / Choose language",
-    type: "assistant",
-    id: nextId(),
-    options: [
-      { text: "Английский / English", type: "option", id: 2, lang: "en" },
-      { text: "Русский / Russian", type: "option", id: 2, lang: "ru" },
-    ],
-  },
-];
 
 function Home() {
   const [chatList, setChatList] = useState<IMessage[]>(initChatList);
   const [loading, setLoading] = useState(false);
+  const [isAssistantActivated, setIsAssistantActivated] = useState(false);
   const containerRef = useRef<HTMLInputElement>(null);
 
   const updateList = (text: string, type: string, id = nextId()) => {
@@ -35,16 +31,21 @@ function Home() {
     setChatList((prevMessages) => [...prevMessages, newItem]);
   };
 
-  const updateOptionList = ({ yes, no, id, question_ru, question_en }) => {
-    const newItem = {
-      text: question_ru ?? question_en,
+  const updateListWithOptions = ({ yes, no, id, question }) => {
+    const newItem: IMessage = {
+      text: question,
       id,
       type: "assistant",
-      options: [
+    };
+    if (!no && !yes) {
+      newItem.options = [startOverChat, activateAssistant];
+    } else {
+      newItem.options = [
         { id: yes, text: "Yes", type: "option" },
         { id: no, text: "No", type: "option" },
-      ],
-    };
+      ];
+    }
+
     setChatList((prevMessages) => [...prevMessages, newItem]);
   };
 
@@ -63,7 +64,7 @@ function Home() {
       handlePlaySound(`${API_URL}${audio}`);
       updateList(response, "assistant");
     } catch {
-      updateList("Ошибка, можете повторить", "error");
+      updateList("Error, can you repeat it?", "error");
     } finally {
       setLoading(false);
       scrollBottom(containerRef);
@@ -74,26 +75,64 @@ function Home() {
     console.log("User is inactive for 3 minutes");
   };
 
-  const handleOptionClick = async (option: IMessage) => {
-    if (option?.lang === "ru") i18next.changeLanguage("ru");
-    if (option?.lang === "en") i18next.changeLanguage("en");
-
+  const handleUpdateLastItemOptions = (payload: any) => {
     setChatList((prevData) => {
       const lastIndex = prevData.length - 1;
       const updatedData: IMessage[] = prevData.map((item, index) =>
-        index === lastIndex ? { ...item, options: null } : item
+        index === lastIndex ? { ...item, options: payload } : item
       );
       return [...updatedData];
     });
+  };
+
+  const handleBinaryTreeAnswers = async (option: IMessage) => {
+    const lang = getItem("i18nextLng");
+    handleUpdateLastItemOptions(null);
 
     if (option?.id) {
       updateList(option.text, "user", option.id);
-      const res = (await getBinaryTreeAnswers(
-        option.id
-      )) as IGetBinaryTreeAnswersResponse;
-      handlePlaySound(res.audio_en ?? res.audio_ru);
-      updateOptionList(res);
+      try {
+        setLoading(true);
+        const res = (await getBinaryTreeAnswers(
+          option.id
+        )) as IGetBinaryTreeAnswersResponse;
+
+        if (lang) {
+          handlePlaySound(res["audio_" + lang]);
+          updateListWithOptions({ ...res, question: res["question_" + lang] });
+        }
+      } catch {
+        updateList("Error, can you repeat it?", "error");
+      } finally {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleOptionClick = async (option: IMessage) => {
+    if (option?.lang === chatMessageTypes.RU) i18next.changeLanguage("ru");
+    if (option?.lang === chatMessageTypes.EN) i18next.changeLanguage("en");
+    if (option?.action === chatMessageTypes.ACTIVATE_ASSISTANT) {
+      handlePlaySound("");
+      if (!isAssistantActivated) setIsAssistantActivated(true);
+      handleUpdateLastItemOptions(null);
+      updateList(option.text, "user", option.id);
+      handleUpdateLastItemOptions([startOverChat]);
+      scrollBottom(containerRef);
+      return;
+    }
+    if (option?.action === chatMessageTypes.START_OVER_CHAT) {
+      handlePlaySound("");
+      handleUpdateLastItemOptions(null);
+      updateList(option.text, "user", option.id);
+      setChatList((prev) => [...prev, ...initChatList]);
+      if (isAssistantActivated) setIsAssistantActivated(false);
+      scrollBottom(containerRef);
+      return;
+    }
+
+    handleBinaryTreeAnswers(option);
+    scrollBottom(containerRef);
   };
 
   return (
@@ -108,12 +147,14 @@ function Home() {
         )}
       </div>
 
-      <SpeechRecognation
-        className="container"
-        uploadAudioText={uploadAudioText}
-        updateList={updateList}
-        loading={loading}
-      />
+      {isAssistantActivated && (
+        <SpeechRecognation
+          className="container"
+          uploadAudioText={uploadAudioText}
+          updateList={updateList}
+          loading={loading}
+        />
+      )}
 
       <InactivityTracker
         onInactive={handleInactive}

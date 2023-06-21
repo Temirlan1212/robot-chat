@@ -34,9 +34,7 @@ const ChatCardOptions: FC<{
         <ChatCard
           className={option?.type ?? ""}
           key={index}
-          onClick={() =>
-            option?.id && onOptionClick ? onOptionClick(option) : undefined
-          }
+          onClick={() => (onOptionClick ? onOptionClick(option) : undefined)}
         >
           {t(option.text)}
         </ChatCard>
