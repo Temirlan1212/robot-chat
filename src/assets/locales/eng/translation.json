@@ -1,0 +1,26 @@
+{
+  "Welcome to React": "Welcome to React and react-i18next",
+  "signIn": "Sign in",
+  "signUp": "Sign up",
+  "manga": "Manga",
+  "choose_lang": "choose lang",
+  "russian": "russian",
+  "english": "english",
+  "search": "search",
+
+  "signin": "Sign In",
+  "signinusingthebelow": "Sign in account using the form below",
+  "enterEmail": "Enter your email",
+  "enterPassword": "Enter your password",
+  "changeLanguage": "Change Language",
+
+  "signup": "Create an accaunt",
+  "signUpUsingTheBelow": "Create an account using the form below.",
+  "uploadAva": "You can add ava in your profile",
+
+  "signUpWithPhone": "Sign Up with phone",
+  "signUpWithPhoneBelow": "Sign Up with phone number using the form below.",
+  "SendMessageToNumber": "Send message to number",
+  "verifyCode": "Verify code",
+  "secretCode": "text secret code you got in your phone number"
+}

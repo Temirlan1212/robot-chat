@@ -1,6 +1,6 @@
 import styles from "./SpeechRecognation.module.scss";
 import { useSpeechRecognition } from "react-speech-recognition";
-import { useEffect, useRef, FC } from "react";
+import { useEffect, useRef, FC, useState } from "react";
 import cn from "classnames";
 import SpeechRecognition from "react-speech-recognition";
 import { handlePlay } from "utils/soundEffect";
@@ -31,6 +31,7 @@ const SpeechRecognation: FC<IProps> = ({
     resetTranscript,
   } = useSpeechRecognition();
   const ref = useRef(null);
+  const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
     if (finalTranscript) {
@@ -40,14 +41,26 @@ const SpeechRecognation: FC<IProps> = ({
     }
   }, [finalTranscript]);
 
+  useEffect(() => {
+    if (!listening && isClicked) {
+      handlePlay(StopAssistant);
+    }
+    if (listening && isClicked) {
+      handlePlay(PlayAssistant);
+    }
+  }, [listening]);
+
+  useEffect(() => {
+    return () => handleRecordStop();
+  }, []);
+
   const handleRecordPlay = () => {
     SpeechRecognition.startListening();
-    handlePlay(PlayAssistant);
+    setIsClicked(true);
   };
 
   const handleRecordStop = () => {
     SpeechRecognition.stopListening();
-    handlePlay(StopAssistant);
   };
 
   useOutsideClick(ref, () => {

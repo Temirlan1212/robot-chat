@@ -1,4 +1,4 @@
-@use "../../../../../assets/styles/utils/" as *;
+@use "assets/styles/utils" as *;
 
 .wrapper {
   display: inline-grid;
@@ -10,22 +10,35 @@
   font-size: clamp(1rem, 2.5vw, 1rem);
 
   &.user {
-    border-top-left-radius: 0px;
-    border-top-right-radius: 20px;
-    margin-right: auto;
-  }
-
-  &.assistant {
     background-color: rgba($primary-color, 20%);
     border-top-left-radius: 20px;
     border-top-right-radius: 0px;
     margin-left: auto;
   }
 
+  &.assistant {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 20px;
+    margin-right: auto;
+  }
+
   &.error {
     background-color: rgba($primary-color-danger, 20%);
     border-top-left-radius: 20px;
     border-top-right-radius: 0px;
-    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &.option {
+    transition: $primary-transition;
+    cursor: pointer;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px $primary-color;
+    color: $primary-color;
+
+    &:hover {
+      background-color: $primary-color;
+      color: $primary-color-light;
+    }
   }
 }
