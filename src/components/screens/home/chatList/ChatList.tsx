@@ -5,7 +5,6 @@ import TypingEffect from "components/ui/typingEffect/TypingEffect";
 import Loader from "components/ui/loader/Loader";
 import { useTranslation } from "react-i18next";
 import ChatCard from "components/screens/home/chatList/chatCard/ChatCard";
-import { FixedSizeList as List } from "react-window";
 
 export interface IProps extends HTMLAttributes<HTMLElement> {
   chatList: IMessage[];

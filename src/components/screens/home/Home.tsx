@@ -12,11 +12,7 @@ import { IGetBinaryTreeAnswersResponse } from "shared/types/chatBot";
 import i18next from "i18next";
 import { getItem } from "services/localStorage.service";
 import { chatMessageTypes } from "shared/constants/chat";
-import {
-  activateAssistant,
-  startOverChat,
-  initChatList,
-} from "utils/chatScripts";
+import { startOverChat, initChatList } from "utils/chatScripts";
 import { OnInitAssistant } from "assets/soundEffects";
 
 const { getAssistantResponse, getBinaryTreeAnswers } = assistantChatApi;
@@ -40,7 +36,7 @@ function Home() {
       type: "assistant",
     };
     if (!no && !yes) {
-      newItem.options = [startOverChat, activateAssistant];
+      newItem.options = [startOverChat];
     } else {
       newItem.options = [
         { id: yes, text: "Yes", type: "option" },
@@ -57,14 +53,14 @@ function Home() {
     }
   };
 
-  async function uploadAudioText(text: string) {
+  async function uploadAudioText(message: string) {
     scrollBottom(containerRef);
 
     try {
       setLoading(true);
-      const { response, audio } = await getAssistantResponse(text);
-      handlePlaySound(`${API_URL}${audio}`);
-      updateList(response, "assistant");
+      const { text, audio } = await getAssistantResponse(message);
+      handlePlaySound(`${API_URL}/${audio}`);
+      updateList(text, "assistant");
     } catch {
       updateList("Error, can you repeat it?", "error");
     } finally {
@@ -74,7 +70,7 @@ function Home() {
   }
 
   const handleInactive = () => {
-    console.log("User is inactive for 3 minutes");
+    window.location.reload();
   };
 
   const handleUpdateLastItemOptions = (payload: any) => {
@@ -114,7 +110,7 @@ function Home() {
   const handleOptionClick = async (option: IMessage) => {
     if (option?.lang === chatMessageTypes.RU) i18next.changeLanguage("ru");
     if (option?.lang === chatMessageTypes.EN) i18next.changeLanguage("en");
-    if (option?.action === chatMessageTypes.ACTIVATE_ASSISTANT) {
+    if (String(option?.id) === chatMessageTypes.ACTIVATE_ASSISTANT_ID) {
       handlePlaySound(OnInitAssistant);
       if (!isAssistantActivated) setIsAssistantActivated(true);
       handleUpdateLastItemOptions(null);
@@ -125,17 +121,13 @@ function Home() {
     }
     if (option?.action === chatMessageTypes.START_OVER_CHAT) {
       handlePlaySound("");
-      handleUpdateLastItemOptions(null);
-      updateList(option.text, "user", option.id);
-      setChatList((prev) => [...prev, ...initChatList]);
+      setChatList((prev) => initChatList);
       if (isAssistantActivated) setIsAssistantActivated(false);
-      scrollBottom(containerRef);
       setIsSplitScreenActivated(false);
       return;
     }
 
     handleBinaryTreeAnswers(option);
-    scrollBottom(containerRef);
   };
 
   useEffect(() => {
@@ -146,6 +138,7 @@ function Home() {
     ) {
       setIsSplitScreenActivated(true);
     }
+    scrollBottom(containerRef);
   }, [chatList]);
 
   return (
@@ -172,7 +165,7 @@ function Home() {
 
         <InactivityTracker
           onInactive={handleInactive}
-          timeoutDuration={3 * 60 * 1000}
+          timeoutDuration={15 * 1000}
         />
       </div>
 

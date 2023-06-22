@@ -8,8 +8,10 @@ const assistantChatApi = {
     formData.set("text", payload);
 
     try {
-      const response = await axiosClient.post("/api", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await axiosClient.post("/api/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       return response.data;
     } catch (error) {
@@ -37,3 +39,6 @@ const assistantChatApi = {
 };
 
 export default assistantChatApi;
+function getCookie(arg0: string) {
+  throw new Error("Function not implemented.");
+}

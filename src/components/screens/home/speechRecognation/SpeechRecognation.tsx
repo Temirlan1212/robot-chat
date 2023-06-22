@@ -51,7 +51,14 @@ const SpeechRecognation: FC<IProps> = ({
   }, [listening]);
 
   useEffect(() => {
-    return () => handleRecordStop();
+    const timeOut = setTimeout(() => {
+      handleRecordPlay();
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeOut);
+      handleRecordStop();
+    };
   }, []);
 
   const handleRecordPlay = () => {
@@ -70,7 +77,6 @@ const SpeechRecognation: FC<IProps> = ({
   if (!browserSupportsSpeechRecognition) {
     return <span>Your browser doesn't support Speech o Text</span>;
   }
-
   return (
     <div className={cn(styles.speechRecognation, className)} {...rest}>
       <div ref={ref}>
